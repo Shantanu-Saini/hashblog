@@ -9,53 +9,51 @@ export class AuthService {
         this.client
             .setEndpoint(conf.appwriteUrl)
             .setProject(conf.appwriteProjectId)
-        this.account = new  Account(this.client);
+        this.account = new Account(this.client);
     }
 
     // create account
-    async createAccount({email, password, name}){
+    async createAccount({ email, password, name }) {
         try {
             const userAccount = await this.account.create(ID.unique(), email, password, name);
             if (userAccount) {
                 // login page
-                return this.loginUser({email, password});
+                return this.loginUser({ email, password });
             }
-            else{
+            else {
                 return userAccount;
             }
         } catch (error) {
-            throw error;
+            console.log("Appwrite :: createAccount :: error", error);
         }
     }
 
     // login account
-    async loginUser({email, password}){
+    async loginUser({ email, password }) {
         try {
-            await this.account.createEmailPasswordSession(email, password);
+            return await this.account.createEmailPasswordSession(email, password);
         } catch (error) {
-            throw error;
+            console.log("Appwrite :: loginUser :: error", error);
         }
     }
 
     // check user login
-    async getCurrentUser(){
+    async getCurrentUser() {
         try {
-            // if get account
             return await this.account.get();
         } catch (error) {
-            // didn't reach service
-            throw error;
+            console.log("Appwrite serive :: getCurrentUser :: error", error);
         }
-        // if not get account 
+
         return null;
     }
 
     // logout user
-    async logOut() {
+    async logout() {
         try {
             return this.account.deleteSessions();
         } catch (error) {
-            throw error;
+            console.log("Appwrite :: logout :: error", error);
         }
     }
 
